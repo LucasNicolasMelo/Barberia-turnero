@@ -1,118 +1,95 @@
-const servicios= [
-  {
-    id: 1,
-    nombre: "Corte",
-    precio: 10000,
-    foto: "https://placehold.co/300x300",
-  },
-  {
-    id: 2,
-    nombre: "Corte y Barba",
-    precio: 13000,
-    foto: "https://placehold.co/300x300",
-  },
-  {
-    id: 3,
-    nombre: "Corte niños",
-    precio: 8000,
-    foto: "https://placehold.co/300x300",
-  },
-  {
-    id: 4,
-    nombre: "Barba",
-    precio: 6000,
-    foto: "https://placehold.co/300x300",
-  },
-  {
-    id: 5,
-    nombre: "Reflejos o Claritos",
-    precio: 25000,
-    foto: "https://placehold.co/300x300",
-  },
-  {
-    id: 6,
-    nombre: "Color Global (Decoloracion + Baño de luz)",
-    precio: 35000,
-    foto: "https://placehold.co/300x300",
-  },
-]
-
-const barberos= [
-  {
-    id: 1,
-    nombre: "Kevin",
-    especialidad: "Corte y Barba",
-    experiencia: 5,
-    diasTrabajo: "Lunes a Sabado",
-    horario: "10:00 a 20:00",
-    foto: "https://placehold.co/300x300",
-  },
-  {
-    id: 2,
-    nombre: "Matias",
-    especialidad: "Corte y Coloracion",
-    experiencia: 3,
-    diasTrabajo: "Miercoles a Sabado",
-    horario: "12:00 a 20:00",
-    foto: "https://placehold.co/300x300",
-  },
-  {
-    id: 3,
-    nombre: "Pablo",
-    especialidad: "Corte niños",
-    experiencia: 6,
-    diasTrabajo: "Lunes a Viernes",
-    horario: "10:00 a 18:00",
-    foto: "https://placehold.co/300x300"
-  }
-]
-localStorage.setItem("barberos", JSON.stringify(barberos))
-
 const serviciosSection = document.getElementById("servicios-section")
+const barberosSection = document.getElementById("barberos-home")
 
-function renderServicios() {
-  serviciosSection.innerHTML = ""
-  servicios.forEach(servicio => {
+const URL_SERVICIOS = "./db/servicios.json"
+
+async function obtenerServicios() {
+  try {
+    const response = await fetch(URL_SERVICIOS)
+    const data = await response.json()
+
+    localStorage.setItem("servicios", JSON.stringify(data))
+
+    renderServicios(data)
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Hubo un problema al cargar los servicios.",
+    })
+  }
+}
+
+function renderServicios(servicios) {
+  servicios.forEach((servicio) => {
     const card = document.createElement("div")
     card.classList.add("servicio-card")
-    card.innerHTML = `
-      <img src="${servicio.foto || 'img/servicio-default.jpg'}" alt="${servicio.nombre}" class="servicio-foto">
-      <h3>${servicio.nombre}</h3>
-      <p>Precio: $${servicio.precio.toLocaleString()}</p>
-      <button class="btn-reservar">Pedir turno</button>
-      `
-      const boton = card.querySelector(".btn-reservar")
+
+    card.innerHTML = `<img src="${servicio.foto}" alt="${servicio.nombre}" class="servicio-foto">
+                      <h3>${servicio.nombre}</h3>
+                      <p>Precio: $${servicio.precio.toLocaleString()}</p>
+                      <button class="btn-reservar">Elegir servicio</button>`
+
+    const boton = card.querySelector(".btn-reservar")
     boton.addEventListener("click", () => {
       localStorage.setItem("servicioSeleccionado", JSON.stringify(servicio))
-      window.location.href = "./pages/turno.html"
+      mostrarBarberosParaTurno()
+      window.scrollTo({
+        top: barberosSection.offsetTop,
+        behavior: "smooth",
+      })
     })
 
     serviciosSection.appendChild(card)
   })
 }
 
-renderServicios()
+obtenerServicios()
 
-const barberosSection = document.getElementById("barberos-home")
+const URL_BARBEROS = "./db/barberos.json"
 
-function renderBarberosHome() {
-  barberosSection.innerHTML = ""
-  barberos.forEach(barbero => {
+async function obtenerBarberos() {
+  try {
+    const response = await fetch(URL_BARBEROS)
+    const data = await response.json()
+
+    localStorage.setItem("barberos", JSON.stringify(data))
+
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Hubo un problema al cargar los barberos.",
+    })
+  }
+}
+obtenerBarberos()
+
+function mostrarBarberosParaTurno() {
+  const barberos = JSON.parse(localStorage.getItem("barberos")) || []
+
+  const titulo = document.createElement("h2")
+  titulo.textContent = "Elegí tu barbero:"
+  barberosSection.appendChild(titulo)
+
+  barberos.forEach((barbero) => {
     const card = document.createElement("div")
     card.classList.add("barbero-card-home")
 
-    card.innerHTML = `
-      <img src="${barbero.foto || 'img/barbero-default.jpg'}" alt="${barbero.nombre}" class="barbero-foto">
-      <h3>${barbero.nombre}</h3>
-      <p>Especialidad: ${barbero.especialidad}</p>
-      <p>Experiencia: ${barbero.experiencia} años</p>
-      <p>Días: ${barbero.diasTrabajo}</p>
-      <p>Horario: ${barbero.horario}</p>
-    `
+    card.innerHTML = `<img src="${barbero.foto}" alt="${barbero.nombre}" class="barbero-foto">
+                      <h3>${barbero.nombre}</h3>
+                      <p>Especialidad: ${barbero.especialidad}</p>
+                      <p>Experiencia: ${barbero.experiencia} años</p>
+                      <p>Días: ${barbero.diasTrabajo}</p>
+                      <p>Horario: ${barbero.horario}</p>
+                      <button class="btn-seleccionar-barbero">Elegir barbero</button>`
+
+    const boton = card.querySelector(".btn-seleccionar-barbero")
+    boton.addEventListener("click", () => {
+      localStorage.setItem("barberoSeleccionado", JSON.stringify(barbero))
+      window.location.href = "./pages/turno.html"
+    })
 
     barberosSection.appendChild(card)
   })
 }
-
-renderBarberosHome()
-

@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "nombre": "Kevin",
+    "especialidad": "Corte y Barba",
+    "experiencia": 5,
+    "diasTrabajo": "Lunes a Sabado",
+    "horario": "10:00 a 20:00",
+    "foto": "https://placehold.co/300x300"
+  },
+  {
+    "id": 2,
+    "nombre": "Matias",
+    "especialidad": "Corte y Coloracion",
+    "experiencia": 3,
+    "diasTrabajo": "Lunes a Sabado",
+    "horario": "12:00 a 20:00",
+    "foto": "https://placehold.co/300x300"
+  },
+  {
+    "id": 3,
+    "nombre": "Pablo",
+    "especialidad": "Corte niños",
+    "experiencia": 6,
+    "diasTrabajo": "Lunes a Sabado",
+    "horario": "10:00 a 18:00",
+    "foto": "https://placehold.co/300x300"
+  }
+]
