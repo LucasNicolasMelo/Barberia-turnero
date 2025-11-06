@@ -197,7 +197,7 @@ h2 {
 
 
 .navbar {
-  background-color: rgba(5, 184, 5, 0.715);
+  background-color: #05b805b6;
   padding: 16px;
   width: 100%;
   box-sizing: border-box;
@@ -226,41 +226,66 @@ h2 {
   border-radius: 4px;
 }
 
-/* ------------------- MEDIA QUERIES ------------------- */
-@media (max-width: 450px) {
-  .navbar {
-    padding: 8px;
-  }
-
-  .navbar .nav-link {
-    margin-left: 8px;
-    font-size: 16px;
-    padding: 8px 0;
-  }
-
-  .navbar-icon {
-    width: 24px;
-    height: 24px;
-  }
-
-  #form-turno {
-    padding: 15px;
-  }
+.calendar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 10px;
 }
 
-@media (min-width: 451px) and (max-width: 1024px) {
-  .navbar {
-    padding: 12px;
-  }
+.btn-cal {
+  background: #222;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background 0.3s;
+}
 
-  .navbar .nav-link {
-    margin-left: 12px;
-    font-size: 20px;
-    padding: 10px 0;
-  }
+.btn-cal:hover {
+  background: #444;
+}
 
-  .navbar-icon {
-    width: 28px;
-    height: 28px;
-  }
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  max-width: 350px;
+  margin: 0 auto;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.day-name {
+  font-weight: bold;
+  background: #222;
+  color: #fff;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.day {
+  padding: 10px;
+  border-radius: 8px;
+  background: #f5f5f5;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.day:hover {
+  background: #ddd;
+}
+
+.day.disabled {
+  background: #ccc;
+  color: #777;
+  cursor: not-allowed;
+}
+
+.day.selected {
+  background: #198754;
+  color: white;
 }

@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--SWEERALERT-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- JS -->
-     <script defer src="../js/turno.js"></script>
-     <!-- BOOTSTRAP-->
+    <script defer src="../js/turno.js"></script>
+    <!-- BOOTSTRAP-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous"> 
     <!--ANIMATE STYLE-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <!-- CSS -->
     <link rel="stylesheet" href="../styles/style.css">
+    
     <title>Document</title>
 </head>
 <body>
@@ -37,39 +40,52 @@
     <main>
         <h1>Terminá de solicitar tu turno</h1>
 
-        <div id="turno-section"></div>
+        <section id="turno-resumen" class="turno-resumen">
 
-        <h3>Seleccioná tu barbero:</h3>
-        <section id="barberos-section">
-            
         </section>
-        <div id="mensaje-turno">
 
-        </div>
+        <section id="turno-calendario" class="turno-calendario">
+            <h2>Elegí fecha para tu corte</h2>
 
-        <h3>Seleccioná fecha y hora:</h3>
-        <form id="form-turno">
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" placeholder="Tu nombre" required>
+            <div class="calendar-header">
+                <button id="prev-month" class="btn-cal">◀</button>
+                <h3 id="calendar-title"></h3>
+                <button id="next-month" class="btn-cal">▶</button>
+            </div>
 
-            <label for="celular">Celular:</label>
-            <input type="tel" id="celular" placeholder="Tu celular" required>
+            <div id="calendar" class="calendar">
 
-            <label for="fecha">Fecha:</label>
-            <input type="date" id="fecha" required>
+            </div>
 
-            <label for="hora">Hora:</label>
-            <input type="time" id="hora" required>
+            <div>
+                <label for="horaSelect" class="form-label">Seleccioná un horario:</label>
+                <select id="horaSelect" class="form-select" aria-label="Seleccioná un horario">
+                    <option selected disabled>Elegí hora disponible</option>
+                </select>
+            </div>
 
-            <button type="submit">Confirmar turno</button>
-        </form>
+            <div id="formCliente">
+                <h3>Datos del cliente</h3>
+                <form id="clienteForm">
+                    <div>
+                        <label for="nombreCliente" class="form-label">Nombre y apellido</label>
+                        <input type="text" id="nombreCliente" class="form-control" required>
+                    </div>
 
-        <div id="resumen-turno">
+                    <div>
+                        <label for="telefonoCliente" class="form-label">Teléfono</label>
+                        <input type="tel" id="telefonoCliente" class="form-control" required>
+                    </div>
 
-        </div>
-        <div class="cancelar-btn">
-            <button id="btn-cancelar-turno" class="btn-cancelar">Cancelar último turno</button>
-        </div>
+                    <button type="submit" id="guardarTurnoBtn" class="btn btn-success">Confirmar turno</button>
+                </form>
+            </div>
+        </section>
+
+        
+        <section id="turnos-confirmados" class="turnos-confirmados">
+
+        </section>
     </main>
 
     <footer>
@@ -78,5 +94,6 @@
 
     <!--BOOTSTRAP JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+
 </body>
 </html>

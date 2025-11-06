@@ -1,112 +1,214 @@
-const turnoSection = document.getElementById("turno-section")
-const barberosSection = document.getElementById("barberos-section")
-const mensajeTurno = document.getElementById("mensaje-turno")
-const formTurno = document.getElementById("form-turno")
-const resumenTurno = document.getElementById("resumen-turno")
-const btnCancelar = document.getElementById("btn-cancelar-turno")
-const horaInput = document.getElementById("hora")
+const turnoResumen = document.getElementById("turno-resumen")
 
-const servicio = JSON.parse(localStorage.getItem("servicioSeleccionado"))
-const barberos = JSON.parse(localStorage.getItem("barberos")) || []
+const servicioSeleccionado = JSON.parse(localStorage.getItem("servicioSeleccionado"))
+const barberoSeleccionado = JSON.parse(localStorage.getItem("barberoSeleccionado"))
 
-function renderServicioSeleccionado() {
-  if (servicio) {
-    turnoSection.innerHTML = `
-      <h2>Tu servicio seleccionado:</h2>
-      <p>${servicio.nombre} - $${servicio.precio.toLocaleString()}</p>
-    `
-  } else {
-    turnoSection.innerHTML = `<p>No seleccionaste ningún servicio.</p>`
-  }
-}
-
-function ajustarHorario(barbero) {
-  const [horaInicio, horaFin] = barbero.horario.split(" a ")
-  horaInput.min = horaInicio
-  horaInput.max = horaFin
-}
-
-function renderBarberos() {
-  barberosSection.innerHTML = ""
-  barberos.forEach(barbero => {
-    const card = document.createElement("div")
-    card.classList.add("barbero-card")
-    card.innerHTML = `
-      <img src="${barbero.foto || 'img/barbero-default.jpg'}" alt="${barbero.nombre}" class="barbero-foto">
-      <h4>${barbero.nombre}</h4>
-      <p>Especialidad: ${barbero.especialidad}</p>
-      <p>Experiencia: ${barbero.experiencia} años</p>
-      <p>Días de trabajo: ${barbero.diasTrabajo}</p>
-      <p>Horario: ${barbero.horario}</p>
-      <button class="btn-elegir">Elegir barbero</button>
-    `
-    const boton = card.querySelector(".btn-elegir")
-    boton.addEventListener("click", () => {
-      localStorage.setItem("barberoSeleccionado", JSON.stringify(barbero))
-      mensajeTurno.innerText = `Elegiste a ${barbero.nombre}. Ahora completá tu turno con fecha y hora.`
-      ajustarHorario(barbero)
-    })
-    barberosSection.appendChild(card)
+if (!servicioSeleccionado || !barberoSeleccionado) {
+  Swal.fire({
+    icon: "warning",
+    title: "Faltan datos",
+    text: "Por favor seleccioná un servicio y un barbero antes de reservar el turno.",
+  }).then(() => {
+    window.location.href = "../index.html"
   })
+} else {
+  mostrarResumenTurno()
 }
 
-function renderResumen(turno) {
-  resumenTurno.innerHTML = `
-    <h2>Resumen de tu turno:</h2>
-    <p>Servicio: ${turno.servicio.nombre} - $${turno.servicio.precio.toLocaleString()}</p>
-    <p>Barbero: ${turno.barbero.nombre} (${turno.barbero.especialidad})</p>
-    <p>Cliente: ${turno.nombreCliente} - ${turno.celularCliente}</p>
-    <p>Fecha: ${turno.fecha}</p>
-    <p>Hora: ${turno.hora}</p>
-  `
+function mostrarResumenTurno() {
+  turnoResumen.innerHTML = `<h2>Tu selección</h2>
+                            <div class="resumen-container">
+                              <div class="resumen-servicio">
+                                <h3>Servicio</h3>
+                                <img src="${servicioSeleccionado.foto}" alt="${servicioSeleccionado.nombre}" class="resumen-foto">
+                                <p>${servicioSeleccionado.nombre}</p>
+                                <p>Precio: $${servicioSeleccionado.precio.toLocaleString()}</p>
+                              </div>
+                              <div class="resumen-barbero">
+                                <h3>Barbero</h3>
+                                <img src="${barberoSeleccionado.foto}" alt="${barberoSeleccionado.nombre}" class="resumen-foto">
+                                <p>${barberoSeleccionado.nombre}</p>
+                                <p>Especialidad: ${barberoSeleccionado.especialidad}</p>
+                              </div>
+                            </div>`
 }
 
-renderServicioSeleccionado()
-renderBarberos()
+document.addEventListener("DOMContentLoaded", () => {
+  const calendar = document.getElementById("calendar")
+  const title = document.getElementById("calendar-title")
+  const prevBtn = document.getElementById("prev-month")
+  const nextBtn = document.getElementById("next-month")
+  const horaSelect = document.getElementById("horaSelect")
+  const clienteForm = document.getElementById("clienteForm")
 
-formTurno.addEventListener("submit", (e) => {
-  e.preventDefault()
-  const nombre = document.getElementById("nombre").value.trim()
-  const celular = document.getElementById("celular").value.trim()
-  const fecha = document.getElementById("fecha").value
-  const hora = document.getElementById("hora").value
-  const barbero = JSON.parse(localStorage.getItem("barberoSeleccionado"))
-
-  if (!nombre || !celular || !fecha || !hora || !barbero) {
-    mensajeTurno.innerText = "Completá todos los datos."
-    return
-  }
+  let currentDate = new Date()
 
   let turnosGuardados = JSON.parse(localStorage.getItem("turnosGuardados")) || []
 
-  const turnoExistente = turnosGuardados.find(
-    t => t.barbero.id === barbero.id && t.fecha === fecha && t.hora === hora
-  )
+  function renderCalendar(fecha) {
+    calendar.innerHTML = ""
 
-  if (turnoExistente) {
-    mensajeTurno.innerText = "Ese turno ya está ocupado. Elegí otra hora."
-    return
+    const hoy = new Date()
+    hoy.setHours(0, 0, 0, 0)
+
+    const year = fecha.getFullYear()
+    const month = fecha.getMonth()
+
+    const nombreMes = fecha.toLocaleDateString("es-ES", {
+      month: "long",
+      year: "numeric",
+    })
+    title.textContent = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1)
+
+    const primerDiaMesActual = new Date(hoy.getFullYear(), hoy.getMonth(), 1)
+    const primerDiaVista = new Date(year, month, 1)
+    prevBtn.disabled = primerDiaVista <= primerDiaMesActual
+
+    const primerDia = new Date(year, month, 1)
+    const ultimoDia = new Date(year, month + 1, 0)
+    const diasSemana = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
+
+    diasSemana.forEach((dia) => {
+      const dayName = document.createElement("div")
+      dayName.classList.add("day-name")
+      dayName.textContent = dia
+      calendar.appendChild(dayName)
+    })
+
+    let offset = (primerDia.getDay() + 6) % 7
+    for (let i = 0; i < offset; i++) {
+      calendar.appendChild(document.createElement("div"))
+    }
+
+    for (let dia = 1; dia <= ultimoDia.getDate(); dia++) {
+      const fechaDia = new Date(year, month, dia)
+      const dayEl = document.createElement("div")
+      dayEl.classList.add("day")
+      dayEl.textContent = dia
+
+      const diaSemana = fechaDia.getDay()
+
+      if (diaSemana === 0 || fechaDia < hoy) {
+        dayEl.classList.add("disabled")
+      } else {
+        dayEl.addEventListener("click", () => seleccionarDia(fechaDia, dayEl))
+      }
+
+      calendar.appendChild(dayEl)
+    }
   }
 
-  const turno = { servicio, barbero, fecha, hora, nombreCliente: nombre, celularCliente: celular }
-  turnosGuardados.push(turno)
-  localStorage.setItem("turnosGuardados", JSON.stringify(turnosGuardados))
-  localStorage.setItem("turnoFinal", JSON.stringify(turno))
-  renderResumen(turno)
-  mensajeTurno.innerText = "¡Turno confirmado!"
-})
+  function seleccionarDia(fecha, el) {
+    document.querySelectorAll(".day").forEach((d) => d.classList.remove("selected"))
+    el.classList.add("selected")
 
-btnCancelar.addEventListener("click", () => {
-  let turnosGuardados = JSON.parse(localStorage.getItem("turnosGuardados")) || []
+    const fechaISO = fecha.toISOString().split("T")[0]
+    localStorage.setItem("fechaSeleccionada", fechaISO)
 
-  if (turnosGuardados.length === 0) {
-    mensajeTurno.innerText = "No hay turnos para cancelar."
-    return
+    generarHorariosDisponibles(fecha)
+
+    Swal.fire({
+      icon: "success",
+      title: "Fecha seleccionada",
+      text: `Elegiste el ${fecha.toLocaleDateString("es-AR")}`,
+    })
   }
 
-  const turnoCancelado = turnosGuardados.pop()
-  localStorage.setItem("turnosGuardados", JSON.stringify(turnosGuardados))
-  localStorage.removeItem("turnoFinal")
-  resumenTurno.innerHTML = ""
-  mensajeTurno.innerText = `Turno con ${turnoCancelado.barbero.nombre} el ${turnoCancelado.fecha} a las ${turnoCancelado.hora} cancelado.`
+  function generarHorariosDisponibles(fechaSeleccionada) {
+    horaSelect.innerHTML = `<option selected disabled>Elegí hora disponible</option>`
+    const fechaBase = new Date(fechaSeleccionada)
+
+    const horaInicio = 12
+    const horaFin = 20
+    const intervaloMin = 30
+
+    for (let hora = horaInicio; hora < horaFin; hora++) {
+      for (let min = 0; min < 60; min += intervaloMin) {
+        const fechaHora = new Date(fechaBase)
+        fechaHora.setHours(hora, min, 0, 0)
+        const fechaISO = fechaHora.toISOString().slice(0, 16)
+
+        const ocupado = turnosGuardados.includes(fechaISO)
+
+        const option = document.createElement("option")
+        option.value = fechaISO
+        option.textContent = fechaHora.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        if (ocupado) {
+          option.disabled = true
+          option.textContent += " (Ocupado)"
+        }
+        horaSelect.appendChild(option)
+      }
+    }
+  }
+
+  prevBtn.addEventListener("click", () => {
+    currentDate.setMonth(currentDate.getMonth() - 1)
+    renderCalendar(currentDate)
+  })
+
+  nextBtn.addEventListener("click", () => {
+    currentDate.setMonth(currentDate.getMonth() + 1)
+    renderCalendar(currentDate)
+  })
+
+  renderCalendar(currentDate)
+
+
+  clienteForm.addEventListener("submit", (e) => {
+    e.preventDefault()
+
+    const nombreCliente = document.getElementById("nombreCliente").value.trim()
+    const telefonoCliente = document.getElementById("telefonoCliente").value.trim()
+    const fechaSeleccionada = localStorage.getItem("fechaSeleccionada")
+    const horaSeleccionada = document.getElementById("horaSelect").value
+    const horaSeleccionadaTexto = document.getElementById("horaSelect").selectedOptions[0].text
+
+    const servicioSeleccionado = JSON.parse(localStorage.getItem("servicioSeleccionado") || "null")
+    const barberoSeleccionado = JSON.parse(localStorage.getItem("barberoSeleccionado") || "null")
+
+    if (!fechaSeleccionada || !horaSeleccionada || !servicioSeleccionado || !barberoSeleccionado) {
+      Swal.fire({
+        icon: "warning",
+        title: "Faltan datos",
+        text: "Asegurate de haber elegido servicio, barbero, fecha y hora antes de confirmar.",
+      })
+      return
+    }
+
+    const turnoCompleto = {
+      cliente: { nombre: nombreCliente, telefono: telefonoCliente },
+      servicio: servicioSeleccionado,
+      barbero: barberoSeleccionado,
+      fecha: fechaSeleccionada,
+      hora: horaSeleccionada,
+    }
+
+    const turnosCompletos = JSON.parse(localStorage.getItem("turnosCompletos") || "[]")
+    turnosCompletos.push(turnoCompleto)
+    localStorage.setItem("turnosCompletos", JSON.stringify(turnosCompletos))
+
+    turnosGuardados.push(horaSeleccionada)
+    localStorage.setItem("turnosGuardados", JSON.stringify(turnosGuardados))
+
+    generarHorariosDisponibles(fechaSeleccionada)
+
+    Swal.fire({
+      icon: "success",
+      title: "Turno confirmado",
+      html: `
+        <b>Cliente:</b> ${nombreCliente}<br>
+        <b>Teléfono:</b> ${telefonoCliente}<br><br>
+        <b>Servicio:</b> ${servicioSeleccionado.nombre} ($${servicioSeleccionado.precio})<br>
+        <b>Barbero:</b> ${barberoSeleccionado.nombre}<br>
+        <b>Fecha:</b> ${new Date(fechaSeleccionada).toLocaleDateString("es-AR")}<br>
+        <b>Hora:</b> ${horaSeleccionadaTexto} hs
+      `
+    })
+
+
+    clienteForm.reset()
+    document.querySelectorAll(".day").forEach((d) => d.classList.remove("selected"))
+    localStorage.removeItem("fechaSeleccionada")
+  })
 })
