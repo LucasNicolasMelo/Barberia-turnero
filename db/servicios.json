@@ -3,36 +3,36 @@
     "id": 1,
     "nombre": "Corte",
     "precio": 10000,
-    "foto": "https://placehold.co/300x300"
+    "foto": "../assets/corte.jpg"
   },
   {
     "id": 2,
     "nombre": "Corte y Barba",
     "precio": 13000,
-    "foto": "https://placehold.co/300x300"
+    "foto": "../assets/corteybarba.jpg"
   },
   {
     "id": 3,
     "nombre": "Corte niños",
     "precio": 8000,
-    "foto": "https://placehold.co/300x300"
+    "foto": "../assets/corteniño.jpg"
   },
   {
     "id": 4,
     "nombre": "Barba",
     "precio": 6000,
-    "foto": "https://placehold.co/300x300"
+    "foto": "../assets/corteybarba.jpg"
   },
   {
     "id": 5,
     "nombre": "Reflejos o Claritos",
     "precio": 25000,
-    "foto": "https://placehold.co/300x300"
+    "foto": "../assets/claritos.jpg"
   },
   {
     "id": 6,
     "nombre": "Color Global (Decoloracion + Baño de luz)",
     "precio": 35000,
-    "foto": "https://placehold.co/300x300"
+    "foto": "../assets/colorglobal.jpg"
   }
 ]

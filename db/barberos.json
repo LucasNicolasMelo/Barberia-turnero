@@ -6,7 +6,7 @@
     "experiencia": 5,
     "diasTrabajo": "Lunes a Sabado",
     "horario": "10:00 a 20:00",
-    "foto": "https://placehold.co/300x300"
+    "foto": "../assets/barbero1.jpg"
   },
   {
     "id": 2,
@@ -15,7 +15,7 @@
     "experiencia": 3,
     "diasTrabajo": "Lunes a Sabado",
     "horario": "12:00 a 20:00",
-    "foto": "https://placehold.co/300x300"
+    "foto": "../assets/barbero2.jpg"
   },
   {
     "id": 3,
@@ -24,6 +24,6 @@
     "experiencia": 6,
     "diasTrabajo": "Lunes a Sabado",
     "horario": "10:00 a 18:00",
-    "foto": "https://placehold.co/300x300"
+    "foto": "../assets/barbero3.jpg"
   }
 ]
