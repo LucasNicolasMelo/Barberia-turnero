@@ -68,10 +68,6 @@ obtenerBarberos()
 function mostrarBarberosParaTurno() {
   const barberos = JSON.parse(localStorage.getItem("barberos")) || []
 
-  const titulo = document.createElement("h2")
-  titulo.textContent = "Elegí tu barbero:"
-  barberosSection.appendChild(titulo)
-
   barberos.forEach((barbero) => {
     const card = document.createElement("div")
     card.classList.add("barbero-card-home")

@@ -31,7 +31,7 @@
   },
   {
     "id": 6,
-    "nombre": "Color Global (Decoloracion + Baño de luz)",
+    "nombre": "Global (Decoloracion + luz)",
     "precio": 35000,
     "foto": "../assets/colorglobal.jpg"
   }
