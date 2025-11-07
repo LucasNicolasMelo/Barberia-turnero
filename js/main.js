@@ -2,6 +2,7 @@ const serviciosSection = document.getElementById("servicios-section")
 const barberosSection = document.getElementById("barberos-home")
 
 const URL_SERVICIOS = "./db/servicios.json"
+const URL_BARBEROS = "./db/barberos.json"
 
 async function obtenerServicios() {
   try {
@@ -9,7 +10,6 @@ async function obtenerServicios() {
     const data = await response.json()
 
     localStorage.setItem("servicios", JSON.stringify(data))
-
     renderServicios(data)
   } catch (err) {
     Swal.fire({
@@ -17,6 +17,8 @@ async function obtenerServicios() {
       title: "Error",
       text: "Hubo un problema al cargar los servicios.",
     })
+  } finally {
+    console.log("Carga de servicios finalizada")
   }
 }
 
@@ -28,15 +30,16 @@ function renderServicios(servicios) {
     card.innerHTML = `<img src="${servicio.foto}" alt="${servicio.nombre}" class="servicio-foto">
                       <h3>${servicio.nombre}</h3>
                       <p>Precio: $${servicio.precio.toLocaleString()}</p>
-                      <button class="btn-reservar">Elegir servicio</button>`
+                      <button class="btn-reservar">Elegir servicio</button>
+    `
 
     const boton = card.querySelector(".btn-reservar")
     boton.addEventListener("click", () => {
-      localStorage.setItem("servicioSeleccionado", JSON.stringify(servicio))
-      mostrarBarberosParaTurno()
-      window.scrollTo({
-        top: barberosSection.offsetTop,
-        behavior: "smooth",
+        localStorage.setItem("servicioSeleccionado", JSON.stringify(servicio))
+        mostrarBarberosParaTurno()
+        window.scrollTo({
+          top: barberosSection.offsetTop,
+          behavior: "smooth",
       })
     })
 
@@ -44,26 +47,22 @@ function renderServicios(servicios) {
   })
 }
 
-obtenerServicios()
-
-const URL_BARBEROS = "./db/barberos.json"
-
 async function obtenerBarberos() {
   try {
     const response = await fetch(URL_BARBEROS)
     const data = await response.json()
 
     localStorage.setItem("barberos", JSON.stringify(data))
-
   } catch (err) {
     Swal.fire({
       icon: "error",
       title: "Error",
       text: "Hubo un problema al cargar los barberos.",
     })
+  } finally {
+    console.log("Carga de barberos finalizada")
   }
 }
-obtenerBarberos()
 
 function mostrarBarberosParaTurno() {
   const barberos = JSON.parse(localStorage.getItem("barberos")) || []
@@ -72,13 +71,15 @@ function mostrarBarberosParaTurno() {
     const card = document.createElement("div")
     card.classList.add("barbero-card-home")
 
-    card.innerHTML = `<img src="${barbero.foto}" alt="${barbero.nombre}" class="barbero-foto">
-                      <h3>${barbero.nombre}</h3>
-                      <p>Especialidad: ${barbero.especialidad}</p>
-                      <p>Experiencia: ${barbero.experiencia} años</p>
-                      <p>Días: ${barbero.diasTrabajo}</p>
-                      <p>Horario: ${barbero.horario}</p>
-                      <button class="btn-seleccionar-barbero">Elegir barbero</button>`
+    card.innerHTML = `
+      <img src="${barbero.foto}" alt="${barbero.nombre}" class="barbero-foto">
+      <h3>${barbero.nombre}</h3>
+      <p>Especialidad: ${barbero.especialidad}</p>
+      <p>Experiencia: ${barbero.experiencia} años</p>
+      <p>Días: ${barbero.diasTrabajo}</p>
+      <p>Horario: ${barbero.horario}</p>
+      <button class="btn-seleccionar-barbero">Elegir barbero</button>
+    `
 
     const boton = card.querySelector(".btn-seleccionar-barbero")
     boton.addEventListener("click", () => {
@@ -89,3 +90,6 @@ function mostrarBarberosParaTurno() {
     barberosSection.appendChild(card)
   })
 }
+
+obtenerServicios()
+obtenerBarberos()
